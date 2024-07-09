@@ -1379,6 +1379,32 @@ impl<C> WsFederationApi<C> {
                         );
                         assert!(url.host().is_some(), "API client requires a target host");
 
+                        const API_REPLACEMENT_LIST: &[(&str, &str)] = &[
+                            (
+                                "wss://fedimintd.fedimint.freedommint.xyz/",
+                                "wss://fedimintd.fedimint.tigerboat21.com/",
+                            ),
+                            ("wss://api.bitcoinprinciples.xyz/", "wss://api.d6o.org/"),
+                        ];
+
+                        let url = API_REPLACEMENT_LIST
+                            .iter()
+                            .find_map(|(search_url, replacement_url)| {
+                                if *search_url == url.as_str() {
+                                    debug!(
+                                        "Replacing API URL '{}' with '{}', quick-fix for fedimint/fedimint#5482",
+                                        search_url, replacement_url
+                                    );
+                                    Some(
+                                        SafeUrl::parse(replacement_url)
+                                            .expect("hardcoded replacement url is valid"),
+                                    )
+                                } else {
+                                    None
+                                }
+                            })
+                            .unwrap_or(url);
+
                         FederationPeer {
                             peer_id,
                             url,
