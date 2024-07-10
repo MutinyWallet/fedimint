@@ -250,7 +250,7 @@ where
             epoch_range: ops::Range<u64>,
         ) -> impl futures::Stream<Item = (u64, Vec<AcceptedItem>)> + 'a {
             // How many request for blocks to run in parallel (streaming).
-            const PARALLISM_LEVEL: usize = 64;
+            const PARALLELISM_LEVEL: usize = 10;
             const VERSION_THAT_INTRODUCED_GET_SESSION_STATUS: ApiVersion =
                 ApiVersion { major: 0, minor: 1 };
 
@@ -295,7 +295,7 @@ where
                         (session_idx, block)
                     })
                 })
-                .buffered(PARALLISM_LEVEL)
+                .buffered(PARALLELISM_LEVEL)
         }
 
         /// Make enough progress to justify saving a state snapshot
